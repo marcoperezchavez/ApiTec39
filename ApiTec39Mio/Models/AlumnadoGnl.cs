@@ -19,12 +19,14 @@ namespace ApiTec39Mio.Models
 
         public string ApellidoMaterno { get; set; }
 
-        public string Grado { get; set; }
+        public int Grado { get; set; }
 
         public string Grupo { get; set; }
 
         public DateTime FechaDeIngreso { get; set; }
 
         public string Taller { get; set; }
+
+
     }
 }
