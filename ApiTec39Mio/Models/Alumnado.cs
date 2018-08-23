@@ -5,14 +5,19 @@ namespace ApiTec39Mio.Models
 {
     public partial class Alumnado
     {
+        public Alumnado()
+        {
+            InfoReportes = new HashSet<InfoReportes>();
+        }
+
         public int Id { get; set; }
-        public int? Status { get; set; }
-        public int? Reportes { get; set; }
+        public int Status { get; set; }
+        public int Reportes { get; set; }
         public string Nombre { get; set; }
         public string ApellidoPaterno { get; set; }
         public string ApellidoMaterno { get; set; }
         public int Grado { get; set; }
-        public int? Grupo { get; set; }
+        public int Grupo { get; set; }
         public DateTime FechaDeIngreso { get; set; }
         public int? Taller { get; set; }
         public string Domicilio { get; set; }
@@ -23,5 +28,6 @@ namespace ApiTec39Mio.Models
         public Reportes ReportesNavigation { get; set; }
         public StatusAlumno StatusNavigation { get; set; }
         public TallerAlumno TallerNavigation { get; set; }
+        public ICollection<InfoReportes> InfoReportes { get; set; }
     }
 }

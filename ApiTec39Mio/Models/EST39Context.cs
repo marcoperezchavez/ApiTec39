@@ -1,11 +1,10 @@
 ﻿using System;
-using ApiTec39Mio.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace ApiTec39Mio
+namespace ApiTec39Mio.Models
 {
-    public class EST39Context : DbContext
+    public partial class EST39Context : DbContext
     {
         public EST39Context()
         {
@@ -20,6 +19,8 @@ namespace ApiTec39Mio
         public virtual DbSet<Documentos> Documentos { get; set; }
         public virtual DbSet<GradoAlumno> GradoAlumno { get; set; }
         public virtual DbSet<GrupoAlumno> GrupoAlumno { get; set; }
+        public virtual DbSet<InfoReportes> InfoReportes { get; set; }
+        public virtual DbSet<Mano> Mano { get; set; }
         public virtual DbSet<RegistroUsuario> RegistroUsuario { get; set; }
         public virtual DbSet<Reportes> Reportes { get; set; }
         public virtual DbSet<StatusAlumno> StatusAlumno { get; set; }
@@ -32,7 +33,7 @@ namespace ApiTec39Mio
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=DESKTOP-E1PQI4V\\SQLEXPRESS;Initial Catalog=EST39;Integrated Security=True;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-E1PQI4V\\SQLEXPRESS;Database=EST39;Trusted_Connection=True;");
             }
         }
 
@@ -50,12 +51,16 @@ namespace ApiTec39Mio
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Domicilio).HasMaxLength(200);
+
                 entity.Property(e => e.FechaDeIngreso).HasColumnType("datetime");
 
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(200)
                     .IsUnicode(false);
+
+                entity.Property(e => e.NombrePadreTutor).HasMaxLength(200);
 
                 entity.HasOne(d => d.GradoNavigation)
                     .WithMany(p => p.Alumnado)
@@ -98,6 +103,32 @@ namespace ApiTec39Mio
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<InfoReportes>(entity =>
+            {
+                entity.Property(e => e.CreationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Description).IsUnicode(false);
+
+                entity.HasOne(d => d.IdAlumnoNavigation)
+                    .WithMany(p => p.InfoReportes)
+                    .HasForeignKey(d => d.IdAlumno)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__InfoRepor__Total__18EBB532");
+
+                entity.HasOne(d => d.IdReporteNavigation)
+                    .WithMany(p => p.InfoReportes)
+                    .HasForeignKey(d => d.IdReporte)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__InfoRepor__IdRep__19DFD96B");
+            });
+
+            modelBuilder.Entity<Mano>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Descripcion).HasMaxLength(200);
             });
 
             modelBuilder.Entity<RegistroUsuario>(entity =>
