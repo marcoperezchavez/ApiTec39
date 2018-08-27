@@ -111,17 +111,7 @@ namespace ApiTec39Mio.Models
 
                 entity.Property(e => e.Description).IsUnicode(false);
 
-                entity.HasOne(d => d.IdAlumnoNavigation)
-                    .WithMany(p => p.InfoReportes)
-                    .HasForeignKey(d => d.IdAlumno)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__InfoRepor__Total__18EBB532");
-
-                entity.HasOne(d => d.IdReporteNavigation)
-                    .WithMany(p => p.InfoReportes)
-                    .HasForeignKey(d => d.IdReporte)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__InfoRepor__IdRep__19DFD96B");
+          
             });
 
             modelBuilder.Entity<Mano>(entity =>

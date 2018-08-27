@@ -24,7 +24,7 @@ namespace ApiTec39Mio.Controllers
 
         // GET: api/InfoReportes/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetInfoReportes([FromRoute] int id)
+        public IActionResult Get(int id)
         {
             var reporte = Methods.Helpers.GetAlumnoId(id);
             if (reporte is null)
@@ -34,21 +34,24 @@ namespace ApiTec39Mio.Controllers
 
         // PUT: api/InfoReportes/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInfoReportes([FromRoute] int id, [FromBody] InfoReportes infoReportes)
+        public IActionResult Put(InfoReportes infoReportes)
         {
             return null;
         }
 
         // POST: api/InfoReportes
         [HttpPost]
-        public async Task<IActionResult> PostInfoReportes([FromBody] InfoReportes infoReportes)
+        public IActionResult Post([FromBody] InfoReportesGnl infoReportes)
         {
-            return null;
+            var isSave = Methods.Helpers.SaveReport(infoReportes);
+            if (isSave)
+                return Ok();
+            return BadRequest();
         }
 
         // DELETE: api/InfoReportes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteInfoReportes([FromRoute] int id)
+        public IActionResult Delete(int id)
         {
             return null;
         }

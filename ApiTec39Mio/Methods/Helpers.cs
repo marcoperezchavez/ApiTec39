@@ -37,7 +37,39 @@ namespace ApiTec39Mio.Methods
             return reporteMapping;
         }
 
-        private static InfoReportesGnl MappingReporteId(InfoReportes reporte)
+        internal static bool SaveReport(InfoReportesGnl infoReportes)
+        {
+            try
+            {
+                var reporteDB = mappingReportDB(infoReportes); 
+                _context.InfoReportes.Add(reporteDB);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        private static InfoReportes mappingReportDB(InfoReportesGnl infoReportes)
+        {
+            InfoReportes repor = new InfoReportes()
+            {
+                IdAlumno = infoReportes.IdAlumno,
+                CreationDate = infoReportes.CreationDate,
+                Description = infoReportes.Description,
+                IdReporte = getTypeReport(infoReportes.NombreReporte)
+            };
+            return repor;
+        }
+        private static int getTypeReport(string nombreReporte)
+        {
+            var nombre = _context.Reportes.Where(x => x.TipoDeReporte.ToUpper() == nombreReporte.ToUpper()).Select(x => x.Id).FirstOrDefault();
+            return nombre;
+        }
+
+    private static InfoReportesGnl MappingReporteId(InfoReportes reporte)
         {
             InfoReportesGnl reporteGnl = new InfoReportesGnl()
             {
@@ -50,10 +82,7 @@ namespace ApiTec39Mio.Methods
                 NombreReporte = GetNombreReporte(reporte.Id)
             };
             return reporteGnl;
-        }
-
-      
-    
+        }     
 
         internal static IEnumerable<InfoReportesGnl> GetReportesList()
         {
@@ -83,11 +112,12 @@ namespace ApiTec39Mio.Methods
 
         private static string GetNombreReporte(int idReporte)
         {
-            var nombre = idReporte.ToString() == "1" ? "Citatorio"
-                : idReporte.ToString() == "2" ? "Reporte"
-                    : idReporte.ToString() == "3" ? "Justificante"
-                       : string.Empty;
-            return nombre;
+            return _context.Reportes.Where(x => x.Id == idReporte).Select(x => x.TipoDeReporte).FirstOrDefault();
+            //var nombre = idReporte.ToString() == "1" ? "Citatorio"
+            //    : idReporte.ToString() == "2" ? "Reporte"
+            //        : idReporte.ToString() == "3" ? "Justificante"
+            //           : string.Empty;
+            //return nombre;
         }
 
         internal static bool SaveAlumno(AlumnadoGnl alumno)
@@ -101,8 +131,7 @@ namespace ApiTec39Mio.Methods
             }
             catch (Exception e)
             {
-                return false;
-
+                return false;    
             }
         }
 
@@ -234,3 +263,5 @@ namespace ApiTec39Mio.Methods
         }
     }
 }
+
+
