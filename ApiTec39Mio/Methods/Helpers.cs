@@ -33,15 +33,16 @@ namespace ApiTec39Mio.Methods
             var reporte = _context.InfoReportes.Where(x => x.Id == id).FirstOrDefault();
             if (reporte is null)
                 return null;
-            var reporteMapping = MappingReporteId(reporte);  
+            var reporteMapping = MappingReporteId(reporte);
             return reporteMapping;
+            return null;
         }
 
         internal static bool SaveReport(InfoReportesGnl infoReportes)
         {
             try
             {
-                var reporteDB = mappingReportDB(infoReportes); 
+                var reporteDB = mappingReportDB(infoReportes);
                 _context.InfoReportes.Add(reporteDB);
                 _context.SaveChanges();
                 return true;
@@ -89,6 +90,7 @@ namespace ApiTec39Mio.Methods
             var reportes = _context.InfoReportes.ToList();
             var reportesMapping = Mapping(reportes);
             return reportesMapping;
+            return null;
         }
 
         private static IEnumerable<InfoReportesGnl> Mapping(List<InfoReportes> reportes)
@@ -177,7 +179,8 @@ namespace ApiTec39Mio.Methods
                     Status = GetStatus(alumno.Status),
                     Grado = alumno.Grado,
                     Grupo = GetGrupo(alumno.Grupo),
-                    Reportes = GetReportes(alumno.Reportes)    
+                    Reportes = GetReportes(alumno.Reportes),
+                    IdAlumno = alumno.IdAlumno
                 };
                 alumandoList.Add(alum);
             }                   
@@ -196,7 +199,8 @@ namespace ApiTec39Mio.Methods
                 Status = GetStatusDB(alumno.Status),
                 Grado = alumno.Grado,
                 Grupo = GetGrupoDB(alumno.Grupo),
-                Reportes = GetReportesDB(alumno.Reportes) 
+                Reportes = GetReportesDB(alumno.Reportes),
+                IdAlumno = alumno.IdAlumno
             };
 
             return al;

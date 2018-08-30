@@ -33,7 +33,7 @@ namespace ApiTec39Mio.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-E1PQI4V\\SQLEXPRESS;Database=EST39;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-E1PQI4V\\SQLEXPRESS;Initial Catalog=EST39;Integrated Security=True;");
             }
         }
 
@@ -54,6 +54,8 @@ namespace ApiTec39Mio.Models
                 entity.Property(e => e.Domicilio).HasMaxLength(200);
 
                 entity.Property(e => e.FechaDeIngreso).HasColumnType("datetime");
+
+                entity.Property(e => e.IdMano).HasColumnType("image");
 
                 entity.Property(e => e.Nombre)
                     .IsRequired()
@@ -110,8 +112,6 @@ namespace ApiTec39Mio.Models
                 entity.Property(e => e.CreationDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Description).IsUnicode(false);
-
-          
             });
 
             modelBuilder.Entity<Mano>(entity =>

@@ -9,6 +9,8 @@ namespace ApiTec39Mio.Models
     {
         public int Id { get; set; }
 
+        public int IdAlumno { get; set; }
+
         public string Status { get; set; }
 
         public string Reportes { get; set; }

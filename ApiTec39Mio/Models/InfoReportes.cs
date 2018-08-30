@@ -10,6 +10,6 @@ namespace ApiTec39Mio.Models
         public int IdReporte { get; set; }
         public string Description { get; set; }
         public DateTime? CreationDate { get; set; }
-        public int? TotalDays { get; set; }                
+        public int? TotalDays { get; set; }
     }
 }
