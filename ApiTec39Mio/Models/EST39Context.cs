@@ -33,7 +33,7 @@ namespace ApiTec39Mio.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-E1PQI4V\\SQLEXPRESS;Initial Catalog=EST39;Integrated Security=True;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-E1PQI4V\\SQLEXPRESS;Database=EST39;Trusted_Connection=True;");
             }
         }
 
@@ -51,43 +51,45 @@ namespace ApiTec39Mio.Models
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Domicilio).HasMaxLength(200);
+                entity.Property(e => e.Domicilio)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.FechaDeIngreso).HasColumnType("datetime");
-
-                entity.Property(e => e.IdMano).HasColumnType("image");
 
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
-                entity.Property(e => e.NombrePadreTutor).HasMaxLength(200);
+                entity.Property(e => e.NombrePadreTutor)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.GradoNavigation)
                     .WithMany(p => p.Alumnado)
                     .HasForeignKey(d => d.Grado)
-                    .HasConstraintName("FK__Alumnado__Grado__5DCAEF64");
+                    .HasConstraintName("FK__Alumnado__Grado__6442E2C9");
 
                 entity.HasOne(d => d.GrupoNavigation)
                     .WithMany(p => p.Alumnado)
                     .HasForeignKey(d => d.Grupo)
-                    .HasConstraintName("FK__Alumnado__Grupo__5EBF139D");
+                    .HasConstraintName("FK__Alumnado__Grupo__65370702");
 
-                entity.HasOne(d => d.ReportesNavigation)
+                entity.HasOne(d => d.IdManoNavigation)
                     .WithMany(p => p.Alumnado)
-                    .HasForeignKey(d => d.Reportes)
-                    .HasConstraintName("FK__Alumnado__Report__5BE2A6F2");
+                    .HasForeignKey(d => d.IdMano)
+                    .HasConstraintName("FK__Alumnado__IdMano__681373AD");
 
                 entity.HasOne(d => d.StatusNavigation)
                     .WithMany(p => p.Alumnado)
                     .HasForeignKey(d => d.Status)
-                    .HasConstraintName("FK__Alumnado__Taller__5AEE82B9");
+                    .HasConstraintName("FK__Alumnado__Status__671F4F74");
 
                 entity.HasOne(d => d.TallerNavigation)
                     .WithMany(p => p.Alumnado)
                     .HasForeignKey(d => d.Taller)
-                    .HasConstraintName("FK__Alumnado__Taller__5CD6CB2B");
+                    .HasConstraintName("FK_Alumnado_Taller");
             });
 
             modelBuilder.Entity<Documentos>(entity =>
@@ -112,6 +114,12 @@ namespace ApiTec39Mio.Models
                 entity.Property(e => e.CreationDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Description).IsUnicode(false);
+
+                entity.HasOne(d => d.IdReporteNavigation)
+                    .WithMany(p => p.InfoReportes)
+                    .HasForeignKey(d => d.IdReporte)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InfoReportes_TipoReportes");
             });
 
             modelBuilder.Entity<Mano>(entity =>

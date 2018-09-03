@@ -28,6 +28,21 @@ namespace ApiTec39Mio.Methods
             return alumnoMapping;
         }
 
+        internal static bool SaveAlumno(AlumnadoGnl alumno)
+        {
+            try
+            {
+                var alumnoDB = mappingAlumnoDB(alumno);
+                _context.Alumnado.Add(alumnoDB);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+           
         internal static InfoReportesGnl GetAlumnoId(int id)
         {
             var reporte = _context.InfoReportes.Where(x => x.Id == id).FirstOrDefault();
@@ -59,8 +74,8 @@ namespace ApiTec39Mio.Methods
             {
                 IdAlumno = infoReportes.IdAlumno,
                 CreationDate = infoReportes.CreationDate,
-                Description = infoReportes.Description,
-                IdReporte = getTypeReport(infoReportes.NombreReporte)
+                Description = infoReportes.Description ?? string.Empty,
+                IdReporte = getTypeReport(infoReportes.NombreReporte),  
             };
             return repor;
         }
@@ -122,20 +137,7 @@ namespace ApiTec39Mio.Methods
             //return nombre;
         }
 
-        internal static bool SaveAlumno(AlumnadoGnl alumno)
-        {
-            try
-            {
-                var alumnoDB = mappingAlumnoDB(alumno);
-                _context.Alumnado.Add(alumnoDB);
-                _context.SaveChanges();
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;    
-            }
-        }
+        
 
         internal static bool DeleteId(int id)
         {
@@ -178,8 +180,7 @@ namespace ApiTec39Mio.Methods
                     Taller = GetTaller(alumno.Taller),
                     Status = GetStatus(alumno.Status),
                     Grado = alumno.Grado,
-                    Grupo = GetGrupo(alumno.Grupo),
-                    Reportes = GetReportes(alumno.Reportes),
+                    Grupo = GetGrupo(alumno.Grupo),          
                     IdAlumno = alumno.IdAlumno
                 };
                 alumandoList.Add(alum);
@@ -195,15 +196,25 @@ namespace ApiTec39Mio.Methods
                 ApellidoPaterno = alumno.ApellidoPaterno,
                 ApellidoMaterno = alumno.ApellidoMaterno,
                 FechaDeIngreso = alumno.FechaDeIngreso,
-                Taller = GetTallerDB(alumno.Taller),
-                Status = GetStatusDB(alumno.Status),
-                Grado = alumno.Grado,
-                Grupo = GetGrupoDB(alumno.Grupo),
-                Reportes = GetReportesDB(alumno.Reportes),
-                IdAlumno = alumno.IdAlumno
+                Taller = alumno.Taller != null ? GetTallerDB(alumno.Taller): 5, // No definido
+                Status = alumno.Status != null ? GetStatusDB(alumno.Status): 4, // No definido
+                Grado = alumno.Grado != null ? alumno.Grado : 4, //No definido pero solo tendra 4
+                Grupo = alumno.Grupo != null ? GetGrupoDB(alumno.Grupo) : 7, //No definido       
+                IdAlumno = alumno.IdAlumno != null ? alumno.IdAlumno: 0, //No definido
+                IdMano = alumno.Mano != null ? getIdMano(alumno.Mano): 4, //No definido
+                Domicilio = alumno.Domicilio,
+                NombrePadreTutor = alumno.NombrePadreTutor
             };
 
             return al;
+        }
+
+        private static int getIdMano(string mano)
+        {
+            var idMano = _context.Mano.Where(x => x.Descripcion.ToUpper() == mano.ToUpper()).Select(x => x.Id)
+                .FirstOrDefault();
+
+            return idMano;
         }
 
         private static AlumnadoGnl MappingAlumno(Alumnado alumno)
@@ -218,8 +229,7 @@ namespace ApiTec39Mio.Methods
                 Taller = GetTaller(alumno.Taller),
                 Status = GetStatus(alumno.Status),
                 Grado = alumno.Grado,
-                Grupo = GetGrupo(alumno.Grupo),
-                Reportes = GetReportes(alumno.Reportes)
+                Grupo = GetGrupo(alumno.Grupo),         
             };
             return alum;
         }

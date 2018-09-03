@@ -11,5 +11,7 @@ namespace ApiTec39Mio.Models
         public string Description { get; set; }
         public DateTime? CreationDate { get; set; }
         public int? TotalDays { get; set; }
+
+        public Reportes IdReporteNavigation { get; set; }
     }
 }

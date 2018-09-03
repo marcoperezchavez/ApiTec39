@@ -31,7 +31,7 @@ namespace ApiTec39Mio.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public IActionResult Post(AlumnadoGnl alumno)
+        public IActionResult Post([FromBody] AlumnadoGnl alumno)
         {
             var isSave = Methods.Helpers.SaveAlumno(alumno);
             if (isSave)
