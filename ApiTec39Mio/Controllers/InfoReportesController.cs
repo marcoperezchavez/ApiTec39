@@ -26,7 +26,7 @@ namespace ApiTec39Mio.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var reporte = Methods.Helpers.GetAlumnoId(id);
+            var reporte = Methods.Helpers.GetReporteId(id);
             if (reporte is null)
                 return NotFound();
             return Ok(reporte); 
@@ -53,7 +53,10 @@ namespace ApiTec39Mio.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            return null;
+            var isDeleted = Methods.Helpers.DeleteReportId(id);
+            if (isDeleted)
+                return Ok();
+            return BadRequest();
         }
 
         private bool InfoReportesExists(int id)

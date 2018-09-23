@@ -9,9 +9,9 @@ namespace ApiTec39Mio.Methods
     public static class Helpers
     {
         static EST39Context _context = new EST39Context();
-        static List<AlumnadoGnl> alumandoList = new List<AlumnadoGnl>();
+        static List<AlumnadoGnl> alumnadoList = new List<AlumnadoGnl>();
         private static List<InfoReportesGnl> reportesList = new List<InfoReportesGnl>();
-           
+
         internal static IEnumerable<AlumnadoGnl> GetAlumnosList()
         {
             var alumnos = _context.Alumnado.ToList();
@@ -19,9 +19,9 @@ namespace ApiTec39Mio.Methods
             return alumnadoMapping;
         }
 
-        internal static AlumnadoGnl GetAlumno(int id)
+        internal static List<AlumnadoGnl> GetAlumno(int id)
         {
-            var alumno = _context.Alumnado.Where(x => x.Id == id).FirstOrDefault();
+            var alumno = _context.Alumnado.Where(x => x.Id == id).ToList();
             if (alumno is null)
                 return null;
             var alumnoMapping = MappingAlumno(alumno);
@@ -42,15 +42,24 @@ namespace ApiTec39Mio.Methods
                 return false;
             }
         }
-           
-        internal static InfoReportesGnl GetAlumnoId(int id)
+
+        internal static List<InfoReportesGnl> GetReporteId(int id)
         {
-            var reporte = _context.InfoReportes.Where(x => x.Id == id).FirstOrDefault();
+            List<InfoReportes> reporte = _context.InfoReportes.Where(x => x.IdAlumno == id).ToList();
             if (reporte is null)
                 return null;
             var reporteMapping = MappingReporteId(reporte);
             return reporteMapping;
-            return null;
+        }
+
+        internal static bool DeleteReportId(int id)
+        {
+            var alumno = _context.InfoReportes.Where(x => x.Id == id).FirstOrDefault();
+            if (alumno is null)
+                return false;
+            _context.Entry(alumno).State = EntityState.Deleted;
+            _context.SaveChanges();
+            return true;
         }
 
         internal static bool SaveReport(InfoReportesGnl infoReportes)
@@ -75,7 +84,7 @@ namespace ApiTec39Mio.Methods
                 IdAlumno = infoReportes.IdAlumno,
                 CreationDate = infoReportes.CreationDate,
                 Description = infoReportes.Description ?? string.Empty,
-                IdReporte = getTypeReport(infoReportes.NombreReporte),  
+                IdReporte = getTypeReport(infoReportes.NombreReporte),
             };
             return repor;
         }
@@ -85,27 +94,34 @@ namespace ApiTec39Mio.Methods
             return nombre;
         }
 
-    private static InfoReportesGnl MappingReporteId(InfoReportes reporte)
+        private static List<InfoReportesGnl> MappingReporteId(List<InfoReportes> reportes)
         {
-            InfoReportesGnl reporteGnl = new InfoReportesGnl()
-            {
-                Id = reporte.Id,
-                IdAlumno = reporte.IdAlumno,
-                IdReporte = reporte.IdReporte,
-                Description = reporte.Description,
-                CreationDate = reporte.CreationDate,
-                TotalDays = reporte.TotalDays,
-                NombreReporte = GetNombreReporte(reporte.Id)
-            };
-            return reporteGnl;
-        }     
+
+            var listReportes = new List<InfoReportesGnl>();
+
+            foreach (var reporte in reportes)
+            {             
+                InfoReportesGnl reporteGnl = new InfoReportesGnl()
+                {
+                    Id = reporte.Id,
+                    IdAlumno = reporte.IdAlumno,
+                    IdReporte = reporte.IdReporte,
+                    Description = reporte.Description ?? string.Empty,
+                    CreationDate = reporte.CreationDate,
+                    TotalDays = reporte.TotalDays,
+                    NombreReporte = GetNombreReporte(reporte.Id) ?? string.Empty
+                };
+                listReportes.Add(reporteGnl);
+            }
+            return listReportes;
+        }
+
 
         internal static IEnumerable<InfoReportesGnl> GetReportesList()
         {
             var reportes = _context.InfoReportes.ToList();
             var reportesMapping = Mapping(reportes);
             return reportesMapping;
-            return null;
         }
 
         private static IEnumerable<InfoReportesGnl> Mapping(List<InfoReportes> reportes)
@@ -122,8 +138,8 @@ namespace ApiTec39Mio.Methods
                     IdReporte = reporte.IdReporte,
                     TotalDays = reporte.TotalDays
                 };
-                    reportesList.Add(repos);   
-            }               
+                reportesList.Add(repos);
+            }
             return reportesList;
         }
 
@@ -137,7 +153,7 @@ namespace ApiTec39Mio.Methods
             //return nombre;
         }
 
-        
+
 
         internal static bool DeleteId(int id)
         {
@@ -168,6 +184,8 @@ namespace ApiTec39Mio.Methods
 
         private static List<AlumnadoGnl> Mapping(List<Alumnado> alumnos)
         {
+            alumnadoList.Clear();
+
             foreach (var alumno in alumnos)
             {
                 AlumnadoGnl alum = new AlumnadoGnl()
@@ -180,28 +198,39 @@ namespace ApiTec39Mio.Methods
                     Taller = GetTaller(alumno.Taller),
                     Status = GetStatus(alumno.Status),
                     Grado = alumno.Grado,
-                    Grupo = GetGrupo(alumno.Grupo),          
-                    IdAlumno = alumno.IdAlumno
+                    Grupo = GetGrupo(alumno.Grupo),
+                    IdAlumno = alumno.IdAlumno,
+                    Mano = GetManoDescription(alumno.IdMano),
+                    Domicilio = alumno.Domicilio,
+                    NombrePadreTutor = alumno.NombrePadreTutor
                 };
-                alumandoList.Add(alum);
-            }                   
-            return alumandoList;
+                alumnadoList.Add(alum);
+            }
+            return alumnadoList;
         }
-                                                                          
+
+        private static string GetManoDescription(int? id)
+        {
+
+            var description = id == null ? "No definido"
+                : _context.Mano.Where(x => x.Id == id).Select(x => x.Descripcion).FirstOrDefault();
+            return description;
+        }
+
         private static Alumnado mappingAlumnoDB(AlumnadoGnl alumno)
         {
             Alumnado al = new Alumnado()
-            {   
+            {
                 Nombre = alumno.Nombre,
                 ApellidoPaterno = alumno.ApellidoPaterno,
                 ApellidoMaterno = alumno.ApellidoMaterno,
                 FechaDeIngreso = alumno.FechaDeIngreso,
-                Taller = alumno.Taller != null ? GetTallerDB(alumno.Taller): 5, // No definido
-                Status = alumno.Status != null ? GetStatusDB(alumno.Status): 4, // No definido
+                Taller = alumno.Taller != null ? GetTallerDB(alumno.Taller) : 5, // No definido
+                Status = alumno.Status != null ? GetStatusDB(alumno.Status) : 4, // No definido
                 Grado = alumno.Grado != null ? alumno.Grado : 4, //No definido pero solo tendra 4
                 Grupo = alumno.Grupo != null ? GetGrupoDB(alumno.Grupo) : 7, //No definido       
-                IdAlumno = alumno.IdAlumno != null ? alumno.IdAlumno: 0, //No definido
-                IdMano = alumno.Mano != null ? getIdMano(alumno.Mano): 4, //No definido
+                IdAlumno = alumno.IdAlumno != null ? alumno.IdAlumno : 0, //No definido
+                IdMano = alumno.Mano != null ? getIdMano(alumno.Mano) : 4, //No definido
                 Domicilio = alumno.Domicilio,
                 NombrePadreTutor = alumno.NombrePadreTutor
             };
@@ -217,21 +246,30 @@ namespace ApiTec39Mio.Methods
             return idMano;
         }
 
-        private static AlumnadoGnl MappingAlumno(Alumnado alumno)
+        private static List<AlumnadoGnl> MappingAlumno(List<Alumnado> alumnos)
         {
-            AlumnadoGnl alum = new AlumnadoGnl()
-            {
-                Id = alumno.Id,
-                Nombre = alumno.Nombre,
-                ApellidoPaterno = alumno.ApellidoPaterno,
-                ApellidoMaterno = alumno.ApellidoMaterno,
-                FechaDeIngreso = alumno.FechaDeIngreso,
-                Taller = GetTaller(alumno.Taller),
-                Status = GetStatus(alumno.Status),
-                Grado = alumno.Grado,
-                Grupo = GetGrupo(alumno.Grupo),         
-            };
-            return alum;
+            List <AlumnadoGnl> alumnoListTemp = new List<AlumnadoGnl>(); 
+            foreach (var alumno in alumnos)
+            {     
+                AlumnadoGnl alum = new AlumnadoGnl()
+                {
+                    Id = alumno.Id,
+                    Nombre = alumno.Nombre,
+                    ApellidoPaterno = alumno.ApellidoPaterno,
+                    ApellidoMaterno = alumno.ApellidoMaterno,
+                    FechaDeIngreso = alumno.FechaDeIngreso,
+                    Taller = GetTaller(alumno.Taller),
+                    Status = GetStatus(alumno.Status),
+                    Grado = alumno.Grado,
+                    Grupo = GetGrupo(alumno.Grupo),
+                    Mano = GetManoDescription(alumno.Id),
+                    Domicilio = alumno.Domicilio,
+                    NombrePadreTutor = alumno.NombrePadreTutor
+                };
+                alumnoListTemp.Add(alum);    
+            }
+
+            return alumnoListTemp;
         }
 
         private static int GetReportesDB(string reportes)
@@ -253,8 +291,8 @@ namespace ApiTec39Mio.Methods
         {
 
             return _context.TallerAlumno.Where(x => x.Descripcion == taller).Select(x => x.Id).FirstOrDefault();
-            
-        }      
+
+        }
 
         private static string GetReportes(int? reportes)
         {
@@ -273,7 +311,7 @@ namespace ApiTec39Mio.Methods
 
         private static string GetTaller(int? taller)
         {
-            return _context.TallerAlumno.Find(taller).Descripcion;    
+            return _context.TallerAlumno.Find(taller).Descripcion;
         }
     }
 }

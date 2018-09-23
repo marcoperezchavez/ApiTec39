@@ -21,12 +21,10 @@ namespace ApiTec39Mio.Controllers
         }
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IEnumerable<AlumnadoGnl> Get(int id)
         {
             var alumno = Methods.Helpers.GetAlumno(id);
-            if (alumno is null)
-               return NotFound();
-            return Ok(alumno);
+            return alumno;
         }
 
         // POST api/<controller>
