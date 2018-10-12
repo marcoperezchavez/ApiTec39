@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ApiTec39Mio.Methods
 {
     public static class Helpers
-    {
+    {                     
         static EST39Context _context = new EST39Context();
         static List<AlumnadoGnl> alumnadoList = new List<AlumnadoGnl>();
         private static List<InfoReportesGnl> reportesList = new List<InfoReportesGnl>();
@@ -169,8 +169,10 @@ namespace ApiTec39Mio.Methods
         {
             try
             {
+                
                 var alumnoDB = mappingAlumnoDB(alumno);
-                alumnoDB.Id = id;
+
+                                                             
                 _context.Entry(alumnoDB).State = EntityState.Modified;
                 _context.SaveChanges();
                 return true;
@@ -202,7 +204,8 @@ namespace ApiTec39Mio.Methods
                     IdAlumno = alumno.IdAlumno,
                     Mano = GetManoDescription(alumno.IdMano),
                     Domicilio = alumno.Domicilio,
-                    NombrePadreTutor = alumno.NombrePadreTutor
+                    NombrePadreTutor = alumno.NombrePadreTutor,
+                    Telefono = alumno.Telefono  
                 };
                 alumnadoList.Add(alum);
             }
@@ -214,13 +217,14 @@ namespace ApiTec39Mio.Methods
 
             var description = id == null ? "No definido"
                 : _context.Mano.Where(x => x.Id == id).Select(x => x.Descripcion).FirstOrDefault();
-            return description;
+            return description.Trim();
         }
 
         private static Alumnado mappingAlumnoDB(AlumnadoGnl alumno)
         {
             Alumnado al = new Alumnado()
             {
+                Id = alumno.Id !=null ? alumno.Id : 0,
                 Nombre = alumno.Nombre,
                 ApellidoPaterno = alumno.ApellidoPaterno,
                 ApellidoMaterno = alumno.ApellidoMaterno,
@@ -232,7 +236,8 @@ namespace ApiTec39Mio.Methods
                 IdAlumno = alumno.IdAlumno != null ? alumno.IdAlumno : 0, //No definido
                 IdMano = alumno.Mano != null ? getIdMano(alumno.Mano) : 4, //No definido
                 Domicilio = alumno.Domicilio,
-                NombrePadreTutor = alumno.NombrePadreTutor
+                NombrePadreTutor = alumno.NombrePadreTutor,
+                Telefono = alumno.Telefono ?? string.Empty
             };
 
             return al;

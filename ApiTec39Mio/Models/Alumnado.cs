@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApiTec39Mio.Models
 {
     public partial class Alumnado
     {
+        [Key]
         public int Id { get; set; }
         public int Status { get; set; }
         public string Nombre { get; set; }
@@ -18,6 +20,7 @@ namespace ApiTec39Mio.Models
         public string NombrePadreTutor { get; set; }
         public int? IdAlumno { get; set; }
         public int? IdMano { get; set; }
+        public string Telefono { get; set; }
 
         public GradoAlumno GradoNavigation { get; set; }
         public GrupoAlumno GrupoNavigation { get; set; }

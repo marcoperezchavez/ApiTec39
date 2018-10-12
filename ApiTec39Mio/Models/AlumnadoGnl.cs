@@ -31,7 +31,9 @@ namespace ApiTec39Mio.Models
 
         public string NombrePadreTutor { get; set; }
 
-        public string Mano { get; set; }             
+        public string Mano { get; set; }
+
+        public string Telefono { get; set; }
 
 
     }

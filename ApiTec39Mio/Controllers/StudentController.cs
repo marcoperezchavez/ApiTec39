@@ -3,6 +3,7 @@ using ApiTec39Mio.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite.Internal.ApacheModRewrite;
 
+
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ApiTec39Mio.Controllers
@@ -14,7 +15,7 @@ namespace ApiTec39Mio.Controllers
         [HttpGet]
         public IEnumerable<AlumnadoGnl> Get()
         {
-            var studentlisttest =  Methods.Helpers.GetAlumnosList();
+            var studentlisttest =  Methods.Helpers.GetAlumnosList(); 
             return studentlisttest;
 
 
@@ -39,7 +40,7 @@ namespace ApiTec39Mio.Controllers
 
         // PUT api/<controller>/5
         [HttpPut]
-        public IActionResult Put(AlumnadoGnl alumno)
+        public IActionResult Put([FromBody] AlumnadoGnl alumno)
         {
             var isUpdated = Methods.Helpers.UpdateAlumno(alumno.Id, alumno);
             if (isUpdated)
